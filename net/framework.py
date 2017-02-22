@@ -2,19 +2,21 @@ from . import yolo
 from . import yolov2
 from . import vanilla
 
+
 class framework(object):
     constructor = vanilla.constructor
     loss = vanilla.train.loss
-    
+
     def __init__(self, meta, FLAGS):
         model = meta['model'].split('/')[-1]
         model = '.'.join(model.split('.')[:-1])
         meta['name'] = model
-        
+
         self.constructor(meta, FLAGS)
 
     def is_inp(self):
         return True
+
 
 class YOLO(framework):
     constructor = yolo.constructor
@@ -27,6 +29,7 @@ class YOLO(framework):
     profile = yolo.misc.profile
     _batch = yolo.data._batch
 
+
 class YOLOv2(framework):
     constructor = yolo.constructor
     parse = yolo.data.parse
@@ -37,6 +40,7 @@ class YOLOv2(framework):
     postprocess = yolov2.test.postprocess
     _batch = yolov2.data._batch
 
+
 """
 framework factory
 """
@@ -45,6 +49,7 @@ types = {
     '[detection]': YOLO,
     '[region]': YOLOv2
 }
+
 
 def create_framework(meta, FLAGS):
     net_type = meta['type']
