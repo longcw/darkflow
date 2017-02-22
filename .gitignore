@@ -21,3 +21,4 @@ tfnet/yolo/*.parsed
 /test.py
 
 ckpt
+.idea
