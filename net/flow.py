@@ -78,6 +78,12 @@ def predict(self):
 
     batch = min(self.FLAGS.batch, len(all_inp_))
 
+    # for backward check
+    opt = tf.train.AdamOptimizer()
+    loss = tf.reduce_mean(self.out)
+    grads = tf.gradients(loss, tf.trainable_variables())
+    print(grads)
+
     for j in range(len(all_inp_) // batch):
         inp_feed = list();
         new_all = list()
@@ -94,7 +100,13 @@ def predict(self):
 
         self.say('Forwarding {} inputs ...'.format(len(inp_feed)))
         start = time.time()
-        out, dout = self.sess.run([self.out, self.debug_out], feed_dict)
+        # out, dout = self.sess.run([self.out, self.debug_out], feed_dict)
+        out, dout, grad, loss = self.sess.run([self.out, self.debug_out, grads[1], loss], feed_dict)
+        # grad = grad.transpose((3, 2, 0, 1))
+        # print(grad.shape)
+        # print(grad)
+        # print(loss)
+        # print(np.sum(grad))
         # print(dout.shape)
         # print(dout)
 

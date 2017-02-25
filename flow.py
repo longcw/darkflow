@@ -65,8 +65,9 @@ if FLAGS.savepb:
     tfnet.savepb();
     exit('Done')
 
-print(tfnet.meta)
-tfnet.predict()
+# print(tfnet.meta)
+with tfnet.graph.as_default() as g:
+    tfnet.predict()
 #
 # npz_fname = '{}.npz'.format(weight_fname)
 # print('save to {}'.format(npz_fname))
