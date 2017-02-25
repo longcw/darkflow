@@ -69,9 +69,13 @@ class convolutional(BaseOp):
         temp = tf.pad(self.inp.out, [[0, 0]] + pad + [[0, 0]])
         temp = tf.nn.conv2d(temp, self.lay.w['kernel'], padding = 'VALID', 
             name = self.scope, strides = [1] + [self.lay.stride] * 2 + [1])
-        if self.lay.batch_norm: 
+
+        # temp = tf.nn.bias_add(temp, self.lay.w['biases'])
+
+        if self.lay.batch_norm:
             temp = self.batchnorm(self.lay, temp)
         self.out = tf.nn.bias_add(temp, self.lay.w['biases'])
+        # self.out = temp
 
     def batchnorm(self, layer, inp):
         if not self.var:

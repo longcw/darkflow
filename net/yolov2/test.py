@@ -22,12 +22,14 @@ def postprocess(self, net_out, im, save=True):
     Takes net output, draw net_out, save to disk
     """
     # meta
+    # print(self.meta)
     meta = self.meta
     H, W, _ = meta['out_size']
     threshold = meta['thresh']
     C, B = meta['classes'], meta['num']
     anchors = meta['anchors']
     net_out = net_out.reshape([H, W, B, -1])
+    # print(net_out)
 
     boxes = list()
     for row in range(H):

@@ -6,6 +6,7 @@ from .ops import op_create, identity
 from .ops import HEADER, LINE
 from .framework import create_framework
 from dark.darknet import Darknet
+import numpy as np
 
 
 class TFNet(object):
@@ -41,6 +42,7 @@ class TFNet(object):
         self.framework = create_framework(*args)
 
         self.meta = darknet.meta
+        # print(self.meta)
         self.FLAGS = FLAGS
 
         self.say('\nBuilding net ...')
@@ -62,12 +64,25 @@ class TFNet(object):
 
         # Build the forward pass
         state = identity(self.inp)
+        # self.debug_out = state.out
+
         roof = self.num_layer - self.ntrain
         self.say(HEADER, LINE)
+        conv_i = 0
         for i, layer in enumerate(self.darknet.layers):
             scope = '{}-{}'.format(str(i), layer.type)
-            args = [layer, state, i, roof, self.feed]
+            # print(scope)
+            num = i
+            if layer.type == 'convolutional':
+                num = conv_i
+                conv_i += 1
+            args = [layer, state, num, roof, self.feed]
             state = op_create(*args)
+            print(state.out)
+            if i == 29:
+                print('*****')
+                self.debug_out = state.out
+
             mess = state.verbalise()
             self.say(mess)
         self.say(LINE)
@@ -117,3 +132,18 @@ class TFNet(object):
         self.say('Saving const graph def to {}'.format(name))
         graph_def = tfnet_pb.sess.graph_def
         tf.train.write_graph(graph_def, './', name, False)
+
+    def savenpz(self, fname):
+        with self.graph.as_default() as g:
+            all_vars = tf.global_variables()
+            # print(all_vars)
+            names = [var.name for var in all_vars]
+            values = self.sess.run(all_vars)
+            for i, k in enumerate(names):
+                print(k, values[i].shape)
+
+
+
+            var_dict = dict(zip(names, values))
+
+            np.savez(fname, **var_dict)

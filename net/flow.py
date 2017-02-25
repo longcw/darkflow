@@ -69,7 +69,8 @@ def train(self):
 
 def predict(self):
     inp_path = self.FLAGS.test
-    all_inp_ = os.listdir(inp_path)
+    # all_inp_ = os.listdir(inp_path)
+    all_inp_ = ['person.jpg']
     all_inp_ = [i for i in all_inp_ if self.framework.is_inp(i)]
     if not all_inp_:
         msg = 'Failed to find any test files in {} .'
@@ -93,7 +94,10 @@ def predict(self):
 
         self.say('Forwarding {} inputs ...'.format(len(inp_feed)))
         start = time.time()
-        out = self.sess.run(self.out, feed_dict)
+        out, dout = self.sess.run([self.out, self.debug_out], feed_dict)
+        # print(dout.shape)
+        # print(dout)
+
         stop = time.time();
         last = stop - start
 

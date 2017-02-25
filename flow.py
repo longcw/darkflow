@@ -11,14 +11,14 @@ flags.DEFINE_string("dataset", "./data/VOCdevkit/VOC2007/JPEGImages/", "path to 
 flags.DEFINE_string("backup", "./ckpt/", "path to backup folder")
 flags.DEFINE_string("annotation", "../pascal/VOCdevkit/ANN/", "path to annotation directory")
 flags.DEFINE_float("threshold", 0.1, "detection threshold")
-flags.DEFINE_string("model", "", "configuration of choice")
+flags.DEFINE_string("model", "cfg/yolo-voc.cfg", "configuration of choice")
 flags.DEFINE_string("trainer", "rmsprop", "training algorithm")
 flags.DEFINE_float("momentum", 0.0, "applicable for rmsprop and momentum optimizers")
 flags.DEFINE_boolean("verbalise", True, "say out loud while building graph")
 flags.DEFINE_boolean("train", False, "train the whole net")
-flags.DEFINE_string("load", "", "how to initialize the net? Either from .weights or a checkpoint, or even from scratch")
+flags.DEFINE_string("load", "bin/yolo-voc.weights", "how to initialize the net? Either from .weights or a checkpoint, or even from scratch")
 flags.DEFINE_boolean("savepb", False, "save net and weight to a .pb file")
-flags.DEFINE_float("gpu", 0.0, "how much gpu (from 0.0 to 1.0)")
+flags.DEFINE_float("gpu", 0.6, "how much gpu (from 0.0 to 1.0)")
 flags.DEFINE_float("lr", 1e-5, "learning rate")
 flags.DEFINE_integer("keep", 20, "Number of most recent training results to save")
 flags.DEFINE_integer("batch", 16, "batch size")
@@ -39,6 +39,7 @@ def get_dir(dirs):
 get_dir([FLAGS.test, FLAGS.binary, FLAGS.backup, os.path.join(FLAGS.test, 'out')])
 
 # fix FLAGS.load to appropriate type
+weight_fname = FLAGS.load
 try:
     FLAGS.load = int(FLAGS.load)
 except:
@@ -64,4 +65,9 @@ if FLAGS.savepb:
     tfnet.savepb();
     exit('Done')
 
+print(tfnet.meta)
 tfnet.predict()
+#
+# npz_fname = '{}.npz'.format(weight_fname)
+# print('save to {}'.format(npz_fname))
+# tfnet.savenpz(npz_fname)
