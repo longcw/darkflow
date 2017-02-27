@@ -142,8 +142,6 @@ class TFNet(object):
             for i, k in enumerate(names):
                 print(k, values[i].shape)
 
-
-
             var_dict = dict(zip(names, values))
 
             np.savez(fname, **var_dict)
